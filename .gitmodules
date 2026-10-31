@@ -4,3 +4,6 @@
 [submodule "KineticBoardHAT"]
 	path = KineticBoardHAT
 	url = https://github.com/rusty-dev0/KineticBoard-HAT
+[submodule "Software"]
+	path = Software
+	url = https://github.com/rusty-dev0/Colosseus-Pi

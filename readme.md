@@ -1,25 +1,45 @@
 # Colosseus
-**A simplified robotics platform for students K-12.**
+A simplified, stackable robotics platform for students, hobbyists, and instructors! 
 
-![Atlas Assembly](Images/Colosseus.jpg)
+[![splash](Images/Title.png)](https://youtu.be/LdAY3_a0fH0)
 
-*This project is still in a very early stage; take caution during the initial assembly. Be careful while operating the KineticBoard Leaf 0 because it can induce electric shock if not properly soldered.*
+*Click the image above to see the demo video.*
 
 ## What's Colosseus?
-Colosseus is designed to be a two-wheeled robot that is easy to program and to learn. Its main feature is its stackable design, allowing more and more boards, often called "levels", to be added on top of it like pancakes. The demo version of Colosseus, which is featured in this repo, comes with a lidar as the main sensor on top.
+Colosseus is designed to be a two-wheeled robot that is easy to program and to learn. Its main feature is its stackable design, allowing more and more boards, often called "levels", to be added on top of it like a stack of pancakes. The demo version of Colosseus, which is featured in this repo, comes with a lidar as the main sensor on top. Colosseus comes with some basic libraries and demo programs to help users get started with the platform quickly and easily.
+
+![kbglowy](Images/kineticBoardGreenGlow.jpg)
+*random cool image of Colosseus from the back (I couldn't help myself from including this pic)*
+## How Does It Work?
+- **Raspberry Pi 4**: Essentially Colosseus' "brain." It collects and processes information from various sensors and makes decisions based on them. You could substitute this with any Raspberry Pi SBC board, including a Pi Zero, as long as you have the proper adapters. It connects to the KineticBoard HAT via UART to issue movement commands.
+
+- **Add-ons / LiDAR**: It can detect nearby objects using what's essentially a rotating ToF sensor. The exact  model is an RPLidar C1. It is not necessary for every Colosseus; however, I thought it would make for a great demo, so I kept it in my version. I encourage you to tinker with the 3D models of the layers to add more sensors and modules!
+
+![colosseus again lol](Images/colosseusButOnMyCounterFromTheBack.jpg)
+
+- **KineticBoard HAT**: While the main Pi is busy handling computations and serving an interactive website, the KineticBoard HAT moves Colosseus by spinning the motors. I designed this PCB in KiCAD, and it simplifies motor control, power distribution, and communication with it's many ports. Currently, it takes in a +12V barrel jack input, and converts it to +5V to supply power to the Pi Pico and to a USB-C receptacle for general purpose use. In my design, the receptacle's power is used to keep the Raspberry Pi 4 running. There are two sets of 6-pin adapters which perfectly match the cables that are used to connect the +12V encoder motors. There is also a 3-pin breakout for UART communication with the Raspberry Pi SBC.
+    - **LED Signal Codes**
+        - Near the barrel jack: +12V detected
+        - Upper right hand side: +3.3V is on (Pico connected successfuly)
+        - Middle right hand side: +5V (but not +3.3V)
+        - *The bottom right led is for general purpose. More info can be found in KiCAD schematic.*
+![kbhat](Images/KineticBoard3D.png)
+
+- **KineticLib**: I created a custom library in C to make it easier for other users to directly program the KineticBoard's Pico. Specifically, the library's header files are `Encoder.h`, `Motor.h`, `Direction.h`, and `PID.h`. 
+
+- **WebUI (Demo)**: In my demo, `server.py`, the Pi hosts a web app using uvicorn to create WebSocket connections, allowing users to "see" Colosseus' perspective as it navigates.
+
+![webUI](Images/WebUIDemo.png)
 
 ## Repository Structure
-The folders `Chassis` and `KineticBoard-Leaf` pertain to the M-CAD/E-CAD portions of this project, respectively. `KBLController` contains firmware for the KineticBoard Leaf microcontroller, which needs to be converted into a `.uf2` format by a `gcc-arm-none-eabi` cross-compiler. `Software` is an umbrella folder for the various software components for the Pi 4, but everything is neatly packaged into a Docker container for a quick and easy installation.
+* The folders `Chassis` and `KineticBoardHAT` pertain to the M-CAD/E-CAD portions of this project, respectively.
 
-## What's Inside?
-- **Raspberry Pi 4**: Essentially Atlas's "brain." It collects and processes information from various sensors and makes decisions based on them.
-- **Lidar** (the main thing): It can detect nearby objects using what's essentially a rotating ToF sensor. The exact model is an RPLidar C1.
-- **KineticBoard Leaf**: While the main Pi is busy handling computations and serving an interactive website, the KineticBoard Leaf is a custom microcontroller which spins the robot's motors based on commands from the Pi. The controller ensures that Colosseus moves exactly how it should using a PID loop.
-![kineticBoard](Images/KineticBoardLeaf0.png)
-- **WebUI**: The Pi hosts a web app using uvicorn to create WebSocket connections and allow users to easily interact with the robot. From here, students can "see" Colosseus' perspective. For instance, if one of the levels contains a camera, then an option to view the camera feed will be available. Similarly, if a lidar is connected, then there will be options to view the current point cloud readings from it, too.
-![webUI](Images/WebUIDemo.webp)
+* `Firmware` contains firmware for the KineticBoard HAT's Raspberry Pi Pico microcontroller. Each demo project can be found in the `projects` directory in the submodule. These will need to be converted into a `.uf2` format by a `gcc-arm-none-eabi` cross-compiler. AI was not used in this aside from some gentle debugging and CMake guidance. All of the code is authentic.
+
+* The Python scripts that run on the Raspberry Pi SBC are found in the `Software` folder. To set up the RPLidar C1, refer to this [video](https://www.youtube.com/watch?v=i5bt5gLs7zo). I took help from AI to improve the navigation algorithm in `server.py` and `manual_drive.py`, so run those scripts at your own risk.
+
 ## BOM
-This is list of the parts that I need for this project. `BOM/lcsc.csv` contains the LCSC parts needed, and `BOM/tools.csv` lists the parts required for the rest of the robot from other online retailers like Amazon. Alternatively, I've added it to this README below:
+This is list of the parts that I needed for this project. `BOM/lcsc.csv` contains the LCSC parts needed, and `BOM/tools.csv` lists the parts required for the rest of the robot from other online retailers like Amazon. Alternatively, I've added it to this README below:
 ### KineticBoard Assembly
 | Designator                                    | Footprint                                      | Quantity | Value                       | LCSC Part # |
 |-----------------------------------------------|------------------------------------------------|----------|-----------------------------|-------------|
@@ -68,3 +88,7 @@ This is list of the parts that I need for this project. `BOM/lcsc.csv` contains 
 - LCSC Parts: $22
 
 **Total Cost: ~$177**
+
+---
+#### AI Statement
+AI was used in the revision of the python scripts in the Software submodule. It was used to debug various parts of my project, and to double check certain systems before I tested them (including the PCB, albiet to a much lesser extent).
