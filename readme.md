@@ -9,6 +9,7 @@ A simplified, stackable robotics platform for students, hobbyists, and instructo
 Colosseus is designed to be a two-wheeled robot that is easy to program and to learn. Its main feature is its stackable design, allowing more and more boards, often called "levels", to be added on top of it like a stack of pancakes. The demo version of Colosseus, which is featured in this repo, comes with a lidar as the main sensor on top. Colosseus comes with some basic libraries and demo programs to help users get started with the platform quickly and easily.
 
 ![kbglowy](Images/kineticBoardGreenGlow.jpg)
+
 *random cool image of Colosseus from the back (I couldn't help myself from including this pic)*
 ## How Does It Work?
 - **Raspberry Pi 4**: Essentially Colosseus' "brain." It collects and processes information from various sensors and makes decisions based on them. You could substitute this with any Raspberry Pi SBC board, including a Pi Zero, as long as you have the proper adapters. It connects to the KineticBoard HAT via UART to issue movement commands.
